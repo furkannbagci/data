@@ -44,15 +44,17 @@ df[["pclass","parch"]].nunique() #pclassın ve parchın uniq değılım sayısı
 
 df["embarked"].dtype #embarked değişkeninin tipini öğrenme
 df["embarked"] = df["embarked"].astype("category") #embarked değişkeninin tipini category olarak değiştirme
-embarked_c = df.loc[(df["embarked"]=="C")] #embarked değeri C olanların bilgileri
+embarked_c = df.loc[(df["embarked"]=="C")] #embarked değeri C olanların bilgileri  veya : ( df[df["embarked"]=="C"] )
 embarked_not_s = df.loc[(df["embarked"] != "S")] #embarked değeri S olmayanların bilgileri
 
-female_30 = df.loc[(df["age"] < 30 ) & (df["sex"] == "female")] #yaşı 30dan küçük kadınlar
+female_30 = df.loc[(df["age"] < 30 ) & (df["sex"] == "female")] #yaşı 30dan küçük kadınlar ya da (df[(df["age"] <30]) & (df["sex"] == "female"))
 fare500_age70 = df.loc[(df["age"] > 70) | (df["fare"] > 500)] #yaşı 70'ten büyük veya fare değeri 500'den büyükler
 
 nullvalues = df.isnull().sum() #her sütun için boş değerlerin sayısı
+
 df.drop("who",axis=1,inplace=True) #2ho sütununu kalıcı olarak silme
 
+type(df["deck"].mode())
 df["deck"].isnull() #deck sütununun boş değerleri
 df["deck"] = df["deck"].fillna(df["deck"].mode()[0]) #deck sütununundaki boş değerlerin yerine deck sütununun ortalamasını koy
 #deck tipi seri olduğundan index belirtmek gerekiyor
@@ -78,10 +80,12 @@ time_day_cal = df2.groupby(["time","day"]).agg({"total_bill": ["min","max","mean
 filt = df2[(df2['sex'] == "Female") & (df2['time'] == "Lunch")]
 #obsorved ile varsayılan değişkenin değişmeyeceğini belirtiyoruz
 female_lunch = filt.groupby(["day"],observed=False).agg({"total_bill": ["min","max","mean"], #koşul için df2[()] parantez içine if olmadan belirtilir 
-    "tip":["min","max","mean"]})
+    "tip":["min","max","mean"]}) #filt ile belirtilen koşul üzerinde işlem yapılır
 
 filt_bill_mean = df2.loc[(df2["size"]<3) & (df2["total_bill"]>10),"total_bill"].mean() #filtrelemeye göre total_bill değerlerinin ortalaması
 
 df2["total_bill_tip_sum"]=df2["total_bill"]+df2["tip"] #tip ile total_bill in toplamını veren sütun oluşturma
 anotherdf=df2.sort_values(["total_bill_tip_sum"]).head(30) #total_bill_tip_sum değerlerini sort_values ile küçükten büyüğe sıralar ve head(10) ile ilk 10 değeri gösterir
+#head(30) yerien [:30] kullanılabilir
 df3 = pd.DataFrame(anotherdf) #yeni bir dataframe oluşturup onun içine anotherdf verilerini ataması
+df3.shape #df3'ün satır ve sütun sayılarını gösterir
